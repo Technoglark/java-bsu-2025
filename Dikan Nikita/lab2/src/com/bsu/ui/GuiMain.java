@@ -184,7 +184,7 @@ public class GuiMain {
     }
 
     private void runStressTest() {
-        System.out.println("\n--- ЗАПУСК СТРЕСС-ТЕСТА НА СЧЕТЕ A ---");
+        System.out.println("\nЗАПУСК СТРЕСС-ТЕСТА НА СЧЕТЕ A");
         System.out.println("Отправка 1000 транзакций...");
         for (int i = 0; i < 500; i++) {
             processor.submit(TransactionFactory.createRefillTransaction(accountA, BigDecimal.TEN), transactionService);
