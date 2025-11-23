@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS accounts (
+    id UUID PRIMARY KEY,
+    balance DECIMAL(20, 2) NOT NULL,
+    is_frozen BOOLEAN NOT NULL
+);

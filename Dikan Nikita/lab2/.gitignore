@@ -1,0 +1,47 @@
+# Скомпилированный код
+out/
+target/
+build/
+*.class
+
+# Файлы IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Файлы логов
+*.log
+logs/
+
+# Файлы пакетов/архивов
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Файлы базы данных H2
+*.mv.db
+*.trace.db
+
+# Файлы операционной системы
+# Mac
+.DS_Store
+# Windows
+Thumbs.db
+
+# Файлы конфигурации NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Файлы конфигурации Eclipse
+.classpath
+.project
+.settings/
+
+# Файлы конфигурации VS Code
+.vscode/
