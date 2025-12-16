@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Debt Tracker</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; display: flex; justify-content: center; }
+        .container { width: 800px; background: white; padding: 30px; margin-top: 50px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; flex: 1; }
+        button#add-btn { background: #28a745; color: white; border: none; cursor: pointer; padding: 10px 20px; font-weight: bold; border-radius: 5px;}
+        button#add-btn:hover { background: #218838; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; }
+
+        .done-true { text-decoration: line-through; color: #888; background: #e9ecef; }
+
+        .action-btn { cursor: pointer; border: none; padding: 5px 10px; border-radius: 3px; color: white; }
+        .btn-check { background: #007bff; margin-right: 5px;}
+        .btn-delete { background: #dc3545; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>🔥 Student Debt Tracker 🔥</h2>
+
+    <div class="input-group">
+        <input type="text" id="subject" placeholder="Предмет (напр. OOP)">
+        <input type="text" id="desc" placeholder="Что сдать? (напр. Лаба 1)">
+        <select id="diff">
+            <option value="EASY">Изи</option>
+            <option value="MEDIUM">Норм</option>
+            <option value="HARD">Сложно</option>
+            <option value="NIGHTMARE">Гроб</option>
+        </select>
+        <button id="add-btn" onclick="addTask()">Добавить</button>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Предмет</th>
+            <th>Задача</th>
+            <th>Сложность</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody id="task-list">
+        </tbody>
+    </table>
+</div>
+
+<script>
+    const API = 'http://localhost:8080/api/tasks';
+
+    async function loadTasks() {
+        const res = await fetch(API);
+        const tasks = await res.json();
+        const tbody = document.getElementById('task-list');
+        tbody.innerHTML = ''; // Очистка
+
+        tasks.forEach(task => {
+            const row = document.createElement('tr');
+            if (task.done) row.classList.add('done-true');
+
+            row.innerHTML = `
+                <td>${task.subject}</td>
+                <td>${task.description}</td>
+                <td><b>${task.difficulty}</b></td>
+                <td>
+                    ${!task.done ? `<button class="action-btn btn-check" onclick="completeTask(${task.id})">Сдал</button>` : '✅'}
+                    <button class="action-btn btn-delete" onclick="deleteTask(${task.id})">🗑</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    async function addTask() {
+        const subject = document.getElementById('subject').value;
+        const description = document.getElementById('desc').value;
+        const difficulty = document.getElementById('diff').value;
+
+        if(!subject || !description) return alert("Заполни поля!");
+
+        await fetch(API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subject, description, difficulty })
+        });
+
+        // Очистка полей и перезагрузка
+        document.getElementById('subject').value = '';
+        document.getElementById('desc').value = '';
+        loadTasks();
+    }
+
+    async function completeTask(id) {
+        await fetch(`${API}/${id}/done`, { method: 'PATCH' });
+        loadTasks();
+    }
+
+    async function deleteTask(id) {
+        if(confirm('Точно удалить?')) {
+            await fetch(`${API}/${id}`, { method: 'DELETE' });
+            loadTasks();
+        }
+    }
+
+    loadTasks();
+</script>
+</body>
+</html>
